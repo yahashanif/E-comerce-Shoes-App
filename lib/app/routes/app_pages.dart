@@ -1,7 +1,13 @@
 import 'package:get/get.dart';
 
+import 'package:e_comerce_shoes/app/modules/cart/bindings/cart_binding.dart';
+import 'package:e_comerce_shoes/app/modules/cart/views/cart_view.dart';
+import 'package:e_comerce_shoes/app/modules/checkout/bindings/checkout_binding.dart';
+import 'package:e_comerce_shoes/app/modules/checkout/views/checkout_view.dart';
 import 'package:e_comerce_shoes/app/modules/detail_product/bindings/detail_product_binding.dart';
 import 'package:e_comerce_shoes/app/modules/detail_product/views/detail_product_view.dart';
+import 'package:e_comerce_shoes/app/modules/favorite/bindings/favorite_binding.dart';
+import 'package:e_comerce_shoes/app/modules/favorite/views/favorite_view.dart';
 import 'package:e_comerce_shoes/app/modules/filter_category/bindings/filter_category_binding.dart';
 import 'package:e_comerce_shoes/app/modules/filter_category/views/filter_category_view.dart';
 import 'package:e_comerce_shoes/app/modules/home/bindings/home_binding.dart';
@@ -57,6 +63,21 @@ class AppPages {
       name: _Paths.FILTER_CATEGORY,
       page: () => FilterCategoryView(),
       binding: FilterCategoryBinding(),
+    ),
+    GetPage(
+      name: _Paths.CART,
+      page: () => CartView(),
+      binding: CartBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHECKOUT,
+      page: () => CheckoutView(),
+      binding: CheckoutBinding(),
+    ),
+    GetPage(
+      name: _Paths.FAVORITE,
+      page: () => FavoriteView(),
+      binding: FavoriteBinding(),
     ),
   ];
 }

@@ -11,6 +11,9 @@ abstract class Routes {
   static const REGISTER = _Paths.REGISTER;
   static const DETAIL_PRODUCT = _Paths.DETAIL_PRODUCT;
   static const FILTER_CATEGORY = _Paths.FILTER_CATEGORY;
+  static const CART = _Paths.CART;
+  static const CHECKOUT = _Paths.CHECKOUT;
+  static const FAVORITE = _Paths.FAVORITE;
 }
 
 abstract class _Paths {
@@ -21,4 +24,7 @@ abstract class _Paths {
   static const REGISTER = '/register';
   static const DETAIL_PRODUCT = '/detail-product';
   static const FILTER_CATEGORY = '/filter-category';
+  static const CART = '/cart';
+  static const CHECKOUT = '/checkout';
+  static const FAVORITE = '/favorite';
 }

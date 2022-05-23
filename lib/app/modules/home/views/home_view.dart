@@ -105,25 +105,30 @@ class HomeView extends GetView<HomeController> {
             SizedBox(
               width: 16,
             ),
-            Container(
-              padding: EdgeInsets.all(8),
-              height: 50,
-              width: (MediaQuery.of(context).size.width) -
-                  ((MediaQuery.of(context).size.width / 1.3) + 20 + 16),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.8),
-                    spreadRadius: 1,
-                    blurRadius: 2,
-                    offset: Offset(0, 1), // changes position of shadow
-                  ),
-                ],
-                color: Colors.white,
-              ),
-              child: Image.asset(
-                "assets/icons/cart.png",
+            GestureDetector(
+              onTap: (){
+                Get.toNamed(Routes.CART);
+              },
+              child: Container(
+                padding: EdgeInsets.all(8),
+                height: 50,
+                width: (MediaQuery.of(context).size.width) -
+                    ((MediaQuery.of(context).size.width / 1.3) + 20 + 16),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.8),
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                      offset: Offset(0, 1), // changes position of shadow
+                    ),
+                  ],
+                  color: Colors.white,
+                ),
+                child: Image.asset(
+                  "assets/icons/cart.png",
+                ),
               ),
             )
           ],

@@ -17,3 +17,4 @@ Color greyColor = Color(0xFFFBDBDBD);
 Color greenBlackColor = Color(0xFFF264653);
 Color primaryColor = Color(0xFFFF4A261);
 Color categoryColor = Color(0xFFF2A9D8F);
+Color removeColor = Color(0xFFFE76F51);
