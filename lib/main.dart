@@ -1,3 +1,4 @@
+import 'package:e_comerce_shoes/app/controllers/ongkir_controller.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ongkirC = Get.put(OngkirController(), permanent: true);
     return ResponsiveSizer(builder: (context, orientation, screenType) {
       return GetMaterialApp(
         debugShowCheckedModeBanner: false,

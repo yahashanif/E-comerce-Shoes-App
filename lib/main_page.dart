@@ -1,5 +1,6 @@
 import 'package:e_comerce_shoes/app/modules/favorite/views/favorite_view.dart';
 import 'package:e_comerce_shoes/app/modules/home/views/home_view.dart';
+import 'package:e_comerce_shoes/app/modules/profile/views/profile_view.dart';
 import 'package:e_comerce_shoes/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -49,7 +50,7 @@ class _MainPageState extends State<MainPage> {
             child: FavoriteView(),
           ),
           Center(
-            child: Text("Profile"),
+            child: ProfileView(),
           ),
         ],
       ),
