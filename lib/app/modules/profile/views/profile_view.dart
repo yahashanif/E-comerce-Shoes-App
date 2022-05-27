@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
+import '../../../controllers/umum_controller.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {
+  final umumC = Get.find<UmumController>();
+
   @override
   Widget build(BuildContext context) {
     Widget _header() {
@@ -88,7 +91,7 @@ class ProfileView extends GetView<ProfileController> {
                   ],
                 ),
                 GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     Get.toNamed(Routes.MY_ORDERS);
                   },
                   child: Row(
@@ -117,63 +120,87 @@ class ProfileView extends GetView<ProfileController> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Column(
-                    children: [
-                      Image.asset(
-                        "assets/icons/wallet.png",
-                        width: 20,
-                      ),
-                      SizedBox(
-                        height: 9,
-                      ),
-                      Text(
-                        "Not yet paid",
-                        style: ProductCategoryStyle.copyWith(
-                            fontSize: 10, color: Colors.black),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Image.asset(
-                        "assets/icons/box.png",
-                        width: 20,
-                      ),
-                      SizedBox(
-                        height: 9,
-                      ),
-                      Text("Packing",
+                  GestureDetector(
+                    onTap: () {
+                      umumC.Navbar.value = 0;
+                      Get.toNamed(Routes.MY_ORDERS);
+                    },
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          "assets/icons/wallet.png",
+                          width: 20,
+                        ),
+                        SizedBox(
+                          height: 9,
+                        ),
+                        Text(
+                          "Not yet paid",
                           style: ProductCategoryStyle.copyWith(
-                              fontSize: 10, color: Colors.black)),
-                    ],
+                              fontSize: 10, color: Colors.black),
+                        ),
+                      ],
+                    ),
                   ),
-                  Column(
-                    children: [
-                      Image.asset(
-                        "assets/icons/sent.png",
-                        width: 20,
-                      ),
-                      SizedBox(
-                        height: 9,
-                      ),
-                      Text("Sent",
-                          style: ProductCategoryStyle.copyWith(
-                              fontSize: 10, color: Colors.black)),
-                    ],
+                  GestureDetector(
+                    onTap: () {
+                      umumC.Navbar.value = 1;
+                      Get.toNamed(Routes.MY_ORDERS);
+                    },
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          "assets/icons/box.png",
+                          width: 20,
+                        ),
+                        SizedBox(
+                          height: 9,
+                        ),
+                        Text("Packing",
+                            style: ProductCategoryStyle.copyWith(
+                                fontSize: 10, color: Colors.black)),
+                      ],
+                    ),
                   ),
-                  Column(
-                    children: [
-                      Image.asset(
-                        "assets/icons/done.png",
-                        width: 20,
-                      ),
-                      SizedBox(
-                        height: 9,
-                      ),
-                      Text("Done",
-                          style: ProductCategoryStyle.copyWith(
-                              fontSize: 10, color: Colors.black)),
-                    ],
+                  GestureDetector(
+                    onTap: () {
+                      umumC.Navbar.value = 2;
+                      Get.toNamed(Routes.MY_ORDERS);
+                    },
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          "assets/icons/sent.png",
+                          width: 20,
+                        ),
+                        SizedBox(
+                          height: 9,
+                        ),
+                        Text("Sent",
+                            style: ProductCategoryStyle.copyWith(
+                                fontSize: 10, color: Colors.black)),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      umumC.Navbar.value = 3;
+                      Get.toNamed(Routes.MY_ORDERS);
+                    },
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          "assets/icons/done.png",
+                          width: 20,
+                        ),
+                        SizedBox(
+                          height: 9,
+                        ),
+                        Text("Done",
+                            style: ProductCategoryStyle.copyWith(
+                                fontSize: 10, color: Colors.black)),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -202,7 +229,7 @@ class ProfileView extends GetView<ProfileController> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               GestureDetector(
-                onTap: (){
+                onTap: () {
                   Get.toNamed(Routes.EDIT_PROFILE);
                 },
                 child: Row(
@@ -232,7 +259,7 @@ class ProfileView extends GetView<ProfileController> {
                 height: 20,
               ),
               GestureDetector(
-                onTap: (){
+                onTap: () {
                   Get.toNamed(Routes.EDIT_ADDRESS);
                 },
                 child: Row(
@@ -240,7 +267,11 @@ class ProfileView extends GetView<ProfileController> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.location_on_rounded,size: 30,color: primaryColor,),
+                        Icon(
+                          Icons.location_on_rounded,
+                          size: 30,
+                          color: primaryColor,
+                        ),
                         SizedBox(
                           width: 22,
                         ),
@@ -263,7 +294,11 @@ class ProfileView extends GetView<ProfileController> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.help,size: 30,color: primaryColor,),
+                      Icon(
+                        Icons.help,
+                        size: 30,
+                        color: primaryColor,
+                      ),
                       SizedBox(
                         width: 22,
                       ),
@@ -285,7 +320,11 @@ class ProfileView extends GetView<ProfileController> {
                 children: [
                   Row(
                     children: [
-                       Icon(Icons.stars,size: 30,color: primaryColor,),
+                      Icon(
+                        Icons.stars,
+                        size: 30,
+                        color: primaryColor,
+                      ),
                       SizedBox(
                         width: 22,
                       ),
