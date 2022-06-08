@@ -1,0 +1,33 @@
+{
+    "id_user": "2",
+    "product_detail": {
+        "id": 4,
+        "size": 39,
+        "quantity": 0
+    },
+    "product": {
+        "id": 2,
+        "name": "asdd",
+        "category": {
+            "id": 0,
+            "category": "category 1",
+            "url_photo": ""
+        },
+        "merk": "asdsa",
+        "harga": 2000,
+        "description": "sdgfsdg gsdgsd gsdgsd gdgsd",
+        "product_details": null,
+        "product_image": [
+            {
+                "url_image": "288734200cyber-futuristic-city-fantasy-art-4k-da-1920x1080.jpg"
+            },
+            {
+                "url_image": "288734200hitam putih foto.JPG"
+            },
+            {
+                "url_image": "288734200IMG_3252.JPG"
+            }
+        ]
+    },
+    "quantity": 3
+}

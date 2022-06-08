@@ -1,10 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:e_comerce_shoes/app/controllers/umum_controller.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../../../theme.dart';
+import '../../../routes/app_pages.dart';
 import '../controllers/detail_product_controller.dart';
 
 class DetailProductView extends GetView<DetailProductController> {
@@ -21,7 +23,7 @@ class DetailProductView extends GetView<DetailProductController> {
               enlargeCenterPage: false,
               autoPlay: true,
             ),
-            items: [1, 2, 3, 4, 5].map((i) {
+            items: controller.umumc.listProductImage.map((i) {
               return Builder(
                 builder: (BuildContext context) {
                   return Container(
@@ -29,7 +31,8 @@ class DetailProductView extends GetView<DetailProductController> {
                     decoration: BoxDecoration(
                         color: Colors.amber,
                         image: DecorationImage(
-                            image: AssetImage("assets/test.jpg"),
+                            image: NetworkImage(
+                                baseUrl + "product/image/" + i.urlImage!),
                             fit: BoxFit.cover)),
                   );
                 },
@@ -43,15 +46,14 @@ class DetailProductView extends GetView<DetailProductController> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       Get.back();
                     },
                     child: Container(
                       padding: EdgeInsets.all(5),
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white)
-                      ),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white)),
                       child: Icon(
                         Icons.arrow_back_ios_sharp,
                         color: Colors.white,
@@ -62,16 +64,14 @@ class DetailProductView extends GetView<DetailProductController> {
                   Container(
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white)
-                    ),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white)),
                     child: Icon(
                       Icons.favorite_outline_sharp,
                       color: Colors.white,
                       size: 20,
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -100,19 +100,20 @@ class DetailProductView extends GetView<DetailProductController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Converse x Gorillaz",
+                          controller.umumc.product.value.name!,
                           style: ProductNameStyle.copyWith(fontSize: 18.sp),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Converse",
+                              controller.umumc.product.value.category!.category
+                                  .toString(),
                               style:
                                   ProductCategoryStyle.copyWith(fontSize: 14),
                             ),
                             Text(
-                              "Rp. 400.000",
+                              "Rp. ${controller.umumc.product.value.harga}",
                               style: labelStyle.copyWith(fontSize: 18),
                             )
                           ],
@@ -146,77 +147,48 @@ class DetailProductView extends GetView<DetailProductController> {
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: [
-                                Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 6),
-                                  height: 32,
-                                  width: 27,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: primaryColor),
-                                  child: Center(
-                                    child: Text(
-                                      "42",
-                                      style: ProductNameStyle.copyWith(
-                                          fontSize: 10,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 6),
-                                  height: 32,
-                                  width: 27,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: categoryColor),
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "41",
-                                      style: ProductNameStyle.copyWith(
-                                          fontSize: 10,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 6),
-                                  height: 32,
-                                  width: 27,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: categoryColor),
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "40",
-                                      style: ProductNameStyle.copyWith(
-                                          fontSize: 10,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 6),
-                                  height: 32,
-                                  width: 27,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[400],
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "39",
-                                      style: ProductNameStyle.copyWith(
-                                          fontSize: 10,
-                                          color: Colors.grey[700],
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
+                                ...controller.umumc.listProductsDetail
+                                    .map(
+                                      (element) => GestureDetector(
+                                        onTap: () {
+                                          controller.id_product_detail.value !=
+                                                  element.id.toString()
+                                              ? controller.id_product_detail
+                                                  .value = element.id.toString()
+                                              : controller
+                                                  .id_product_detail.value = "";
+                                        },
+                                        child: Obx(
+                                          () => Container(
+                                            margin: EdgeInsets.symmetric(
+                                                horizontal: 6),
+                                            height: 32,
+                                            width: 27,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                color: controller
+                                                            .id_product_detail
+                                                            .value ==
+                                                        element.id.toString()
+                                                    ? primaryColor
+                                                    : Colors.grey),
+                                            child: Center(
+                                              child: Text(
+                                                element.size.toString(),
+                                                style:
+                                                    ProductNameStyle.copyWith(
+                                                        fontSize: 10,
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    .toList()
                               ],
                             ),
                           ),
@@ -241,7 +213,7 @@ class DetailProductView extends GetView<DetailProductController> {
                       height: 2,
                     ),
                     Text(
-                      "Barang andalan berbahan kulit superlembut agar Anda bisa mengenakannya serapi maupun seberantakan apa pun. Anda yang membuat ceritanya.",
+                      controller.umumc.product.value.description!,
                       style: ProductNameStyle.copyWith(
                           fontSize: 12,
                           color: Colors.grey,
@@ -284,20 +256,26 @@ class DetailProductView extends GetView<DetailProductController> {
             SizedBox(
               width: 10,
             ),
-            Container(
-              height: 47,
-              width: MediaQuery.of(context).size.width - (48 + 59 + 10),
-              decoration: BoxDecoration(
-                  border: Border.all(color: primaryColor),
-                  color: primaryColor,
-                  borderRadius: BorderRadius.circular(10)),
-              child: Center(
-                child: Text(
-                  "Add to cart",
-                  style: ProductNameStyle.copyWith(
-                      fontSize: 15,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
+            GestureDetector(
+              onTap: () {
+                controller.umumc
+                    .AddCart(controller.id_product_detail.value, "1");
+              },
+              child: Container(
+                height: 47,
+                width: MediaQuery.of(context).size.width - (48 + 59 + 10),
+                decoration: BoxDecoration(
+                    border: Border.all(color: primaryColor),
+                    color: primaryColor,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Center(
+                  child: Text(
+                    "Add to cart",
+                    style: ProductNameStyle.copyWith(
+                        fontSize: 15,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
             ),

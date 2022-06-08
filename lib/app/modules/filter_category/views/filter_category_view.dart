@@ -219,15 +219,15 @@ class FilterCategoryView extends GetView<FilterCategoryController> {
             Center(
               child: Wrap(
                 children: [
-                  CardItemShoes(),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  CardItemShoes(),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  CardItemShoes(),
+                  // CardItemShoes(),
+                  // SizedBox(
+                  //   width: 10,
+                  // ),
+                  // CardItemShoes(),
+                  // SizedBox(
+                  //   width: 10,
+                  // ),
+                  // CardItemShoes(),
                 ],
               ),
             )

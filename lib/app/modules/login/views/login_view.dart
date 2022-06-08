@@ -6,9 +6,11 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../../controllers/umum_controller.dart';
 import '../controllers/login_controller.dart';
 
 class LoginView extends GetView<LoginController> {
+  final umumC = Get.find<UmumController>();
   @override
   Widget build(BuildContext context) {
     Widget _UsernameField() {
@@ -24,6 +26,7 @@ class LoginView extends GetView<LoginController> {
               height: 12,
             ),
             TextField(
+              controller: controller.userC,
               autocorrect: false,
               enableSuggestions: false,
               decoration: InputDecoration(
@@ -64,6 +67,7 @@ class LoginView extends GetView<LoginController> {
               height: 12,
             ),
             TextField(
+              controller: controller.passC,
               obscureText: true,
               autocorrect: false,
               enableSuggestions: false,
@@ -94,7 +98,9 @@ class LoginView extends GetView<LoginController> {
 
     Widget _ButtonLogin() {
       return GestureDetector(
-        onTap: () {},
+        onTap: () {
+          umumC.LoginUser(controller.userC.text, controller.passC.text);
+        },
         child: Container(
           width: double.infinity,
           height: 50,
@@ -171,7 +177,7 @@ class LoginView extends GetView<LoginController> {
                 style: GoogleFonts.poppins(fontSize: 12, color: greyColor),
               ),
               GestureDetector(
-                onTap: (){
+                onTap: () {
                   Get.toNamed(Routes.REGISTER);
                 },
                 child: Text(

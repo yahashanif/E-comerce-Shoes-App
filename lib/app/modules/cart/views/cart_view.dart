@@ -1,3 +1,4 @@
+import 'package:e_comerce_shoes/app/controllers/umum_controller.dart';
 import 'package:e_comerce_shoes/theme.dart';
 import 'package:e_comerce_shoes/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +9,11 @@ import '../../../routes/app_pages.dart';
 import '../controllers/cart_controller.dart';
 
 class CartView extends GetView<CartController> {
+  final umumC = Get.find<UmumController>();
+
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       body: SafeArea(
         child: CustomScrollView(
@@ -40,14 +44,20 @@ class CartView extends GetView<CartController> {
                 delegate: SliverChildListDelegate([
               Container(
                 margin: EdgeInsets.only(top: 5, right: 30, left: 30),
-                child: Column(
-                  children: [
-                    ListItem(isCart: true),
-                    ListItem(isCart: true),
-                    ListItem(isCart: true),
-                    ListItem(isCart: true),
-                  ],
-                ),
+                child: StreamBuilder<void>(
+                    stream: umumC.getCartStream(),
+                    builder: (context, snapshot) {
+                      return Column(
+                        children: [
+                          ...umumC.listCart.map((element) {
+                            return ListItem(
+                              isCart: true,
+                              cart: element,
+                            );
+                          }).toList()
+                        ],
+                      );
+                    }),
               )
             ]))
           ],
@@ -76,13 +86,13 @@ class CartView extends GetView<CartController> {
                         "Subtotal",
                         style: ProductNameStyle.copyWith(fontSize: 16),
                       ),
-                      Text(
-                        "Rp. 400.000",
+                      Obx(() => Text(
+                        "Rp. ${umumC.subtotal.value}",
                         style: labelStyle.copyWith(
                           fontSize: 16,
                           color: primaryColor,
                         ),
-                      ),
+                      ),)
                     ],
                   ),
                   SizedBox(
@@ -95,12 +105,12 @@ class CartView extends GetView<CartController> {
                         "Jumlah Item :",
                         style: subTitleStyle.copyWith(fontSize: 12),
                       ),
-                      Text(
-                        "x3",
+                      Obx(() =>  Text(
+                        "x${umumC.jumitem}",
                         style: labelStyle.copyWith(
                           fontSize: 12,
                         ),
-                      ),
+                      ),)
                     ],
                   ),
                   SizedBox(
@@ -115,7 +125,7 @@ class CartView extends GetView<CartController> {
             ),
             Spacer(),
             GestureDetector(
-              onTap: (){
+              onTap: () {
                 Get.toNamed(Routes.CHECKOUT);
               },
               child: Container(

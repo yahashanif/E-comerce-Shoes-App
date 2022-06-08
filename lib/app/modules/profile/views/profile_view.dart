@@ -8,10 +8,9 @@ import '../../../routes/app_pages.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {
-  final umumC = Get.find<UmumController>();
-
   @override
   Widget build(BuildContext context) {
+    final umumC = Get.find<UmumController>();
     Widget _header() {
       return Container(
         color: Colors.white,
@@ -41,11 +40,11 @@ class ProfileView extends GetView<ProfileController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Hanif Aulia Sabri",
+                            "${umumC.user.value.fullName}",
                             style: ProductNameStyle.copyWith(fontSize: 22),
                           ),
                           Text(
-                            "@hanifas",
+                            "@${umumC.user.value.username}",
                             style: ProductCategoryStyle.copyWith(fontSize: 13),
                           ),
                         ],
@@ -92,6 +91,7 @@ class ProfileView extends GetView<ProfileController> {
                 ),
                 GestureDetector(
                   onTap: () {
+                    umumC.Navbar.value = 0;
                     Get.toNamed(Routes.MY_ORDERS);
                   },
                   child: Row(

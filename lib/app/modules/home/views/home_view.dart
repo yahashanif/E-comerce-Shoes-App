@@ -6,79 +6,56 @@ import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../../../theme.dart';
+import '../../../controllers/umum_controller.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
+  final umumC = Get.find<UmumController>();
   @override
   Widget build(BuildContext context) {
     Widget _category() {
-      return Container(
-        height: 120,
-        padding: EdgeInsets.all(20),
-        width: double.infinity,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: [
-            GestureDetector(
-              onTap: (){
-                Get.toNamed(Routes.FILTER_CATEGORY);
-              },
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 5),
-                height: 45,
-                width: 80,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    image: DecorationImage(
-                        image: AssetImage("assets/categori1.png"),
-                        fit: BoxFit.cover)),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 5),
-              height: 45,
-              width: 80,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  image: DecorationImage(
-                      image: AssetImage("assets/categori1.png"),
-                      fit: BoxFit.cover)),
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 5),
-              height: 45,
-              width: 80,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  image: DecorationImage(
-                      image: AssetImage("assets/categori1.png"),
-                      fit: BoxFit.cover)),
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 5),
-              height: 45,
-              width: 80,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  image: DecorationImage(
-                      image: AssetImage("assets/categori1.png"),
-                      fit: BoxFit.cover)),
-            ),
-          ],
-        ),
-      );
+      return FutureBuilder(
+          future: umumC.getCategory(),
+          builder: (context, snapshot) {
+            return Container(
+              height: 120,
+              padding: EdgeInsets.all(20),
+              width: double.infinity,
+              child: Obx(() => ListView.builder(
+                    itemCount: umumC.categories.length,
+                    itemBuilder: (context, index) => GestureDetector(
+                      onTap: () {
+                        Get.toNamed(Routes.FILTER_CATEGORY);
+                      },
+                      child: Container(
+                        margin: EdgeInsets.symmetric(horizontal: 5),
+                        height: 45,
+                        width: 80,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                                image: NetworkImage(baseUrl +
+                                    "category/image" +
+                                    umumC.categories.value[index].urlPhoto!),
+                                fit: BoxFit.cover)),
+                      ),
+                    ),
+                    scrollDirection: Axis.horizontal,
+                  )),
+            );
+          });
     }
 
     Widget header() {
       return Container(
-        
         margin: EdgeInsets.only(top: 10, bottom: 10),
         padding: EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5),bottomRight: Radius.circular(5))
-        ),
+            color: Colors.transparent,
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(5),
+                bottomRight: Radius.circular(5))),
         child: Row(
           children: [
             Container(
@@ -106,7 +83,7 @@ class HomeView extends GetView<HomeController> {
               width: 16,
             ),
             GestureDetector(
-              onTap: (){
+              onTap: () {
                 Get.toNamed(Routes.CART);
               },
               child: Container(
@@ -146,10 +123,14 @@ class HomeView extends GetView<HomeController> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Hi Hanif",
-                    style: NameStyle.copyWith(fontSize: 22),
-                  ),
+                  Obx(() => SizedBox(
+                        width: MediaQuery.of(context).size.width - 140,
+                        child: Text(
+                          "Hi ${umumC.user.value.fullName}",
+                          style: NameStyle.copyWith(fontSize: 22),
+                          maxLines: 1,
+                        ),
+                      )),
                   Text(
                     "Today, Thursday 12 Mei",
                     style: subTitleStyle.copyWith(
@@ -176,7 +157,7 @@ class HomeView extends GetView<HomeController> {
 
     Widget _carausel() {
       return CarouselSlider(
-        options: CarouselOptions(height: 176.0),
+        options: CarouselOptions(height: 176.0,autoPlay: true),
         items: [1, 2, 3, 4, 5].map((i) {
           return Builder(
             builder: (BuildContext context) {
@@ -223,18 +204,29 @@ class HomeView extends GetView<HomeController> {
               height: 24,
             ),
             Center(
-              child: Wrap(
-                children: [
-                  CardItemShoes(),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  CardItemShoes(),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  CardItemShoes(),
-                ],
+              child: StreamBuilder<void>(
+                stream: umumC.getProductsStream(),
+                builder: (context, snapshot) {
+                  if(snapshot.connectionState ==ConnectionState.waiting){
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }else{
+                  return Wrap(
+                    children: [
+                     ...umumC.listProducts.map((element) =>  Container(
+                        child: Column(
+                          children: [
+                            CardItemShoes(element),
+                            SizedBox(
+                              width: 10,
+                            ),
+                          ],
+                        ),
+                      ),).toList()
+                    ],
+                  );}
+                }
               ),
             )
           ]))

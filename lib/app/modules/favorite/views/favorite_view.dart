@@ -1,3 +1,4 @@
+import 'package:e_comerce_shoes/app/controllers/umum_controller.dart';
 import 'package:e_comerce_shoes/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -7,6 +8,7 @@ import '../../../../theme.dart';
 import '../controllers/favorite_controller.dart';
 
 class FavoriteView extends GetView<FavoriteController> {
+  final umumC = Get.find<UmumController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,12 +31,16 @@ class FavoriteView extends GetView<FavoriteController> {
           SliverList(delegate: SliverChildListDelegate([
             Container(
               margin: EdgeInsets.symmetric(horizontal: 30,vertical: 24),
-              child: Column(
-              children: [
-                ListItem(isFavorite: true,),
-                ListItem(isFavorite: true,),
-              ],
-            ))
+              child: StreamBuilder<void>(
+                stream: umumC.getFavoriteStream(),
+                builder: (context, snapshot) {
+                  return Column(
+                  children: [
+                   ...umumC.listProductFavorite.map((element) =>  ListItem(isFavorite: true,product: element),).toList()
+                  ],
+                          );
+                }
+              ))
           ]))
               ],
             ),

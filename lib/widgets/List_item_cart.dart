@@ -3,9 +3,13 @@ part of 'widgets.dart';
 class ListItem extends StatefulWidget {
   final bool? isCart;
   final bool? isFavorite;
+  final Cart? cart;
+  final Product? product;
   ListItem({
     this.isCart = false,
     this.isFavorite = false,
+    this.cart,
+    this.product,
   });
 
   @override
@@ -13,10 +17,11 @@ class ListItem extends StatefulWidget {
 }
 
 class _ListItemState extends State<ListItem> {
+  final umumC = Get.find<UmumController>();
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
+      margin: EdgeInsets.symmetric(vertical: 5),
       padding: EdgeInsets.fromLTRB(20, 20, widget.isCart! ? 36 : 20, 11),
       decoration: BoxDecoration(
           border: Border.all(color: greyColor),
@@ -36,7 +41,16 @@ class _ListItemState extends State<ListItem> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
                         image: DecorationImage(
-                            image: AssetImage("assets/test.jpg"))),
+                            image: widget.isCart == true
+                                ? NetworkImage(baseUrl +
+                                    "product/image/" +
+                                    widget.cart!.product!.productImage!.first
+                                        .urlImage!)
+                                : NetworkImage(baseUrl +
+                                    "product/image/" +
+                                    widget.product!.productImage!.first
+                                        .urlImage!),
+                            fit: BoxFit.cover)),
                   ),
                   SizedBox(
                     width: 13,
@@ -46,14 +60,14 @@ class _ListItemState extends State<ListItem> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Converse x Gorillaz",
+                       widget.isCart == true ? "${widget.cart!.product!.name}" :  "${widget.product!.name}",
                         style: ProductNameStyle.copyWith(fontSize: 14),
                       ),
                       SizedBox(
                         height: 4,
                       ),
                       Text(
-                        "Rp. 400.000",
+                          widget.isCart == true ? "Rp. ${widget.cart!.product!.harga}" :  "Rp. ${widget.product!.harga}",
                         style: labelStyle.copyWith(fontSize: 12),
                       ),
                       SizedBox(
@@ -68,7 +82,7 @@ class _ListItemState extends State<ListItem> {
                                   style: subTitleStyle.copyWith(fontSize: 12),
                                 ),
                                 Text(
-                                  "42",
+                                  "${widget.cart!.productDetail!.size}",
                                   style: subTitleStyle.copyWith(fontSize: 12),
                                 ),
                               ],
@@ -81,15 +95,27 @@ class _ListItemState extends State<ListItem> {
                   ? Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Image.asset("assets/icons/add.png", width: 15),
+                        GestureDetector(
+                            onTap: () {
+                              umumC.addQuantityCart(
+                                  widget.cart!.productDetail!.id.toString());
+                            },
+                            child:
+                                Image.asset("assets/icons/add.png", width: 15)),
                         SizedBox(
                           height: 7,
                         ),
-                        Text("2"),
+                        Text("${widget.cart!.quantity}"),
                         SizedBox(
                           height: 7,
                         ),
-                        Image.asset("assets/icons/min.png", width: 15),
+                        GestureDetector(
+                            onTap: () {
+                              umumC.MinQuantityCart(
+                                  widget.cart!.productDetail!.id.toString());
+                            },
+                            child:
+                                Image.asset("assets/icons/min.png", width: 15)),
                       ],
                     )
                   : widget.isFavorite!

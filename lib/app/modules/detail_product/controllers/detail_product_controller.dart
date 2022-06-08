@@ -1,7 +1,10 @@
 import 'package:get/get.dart';
 
+import '../../../controllers/umum_controller.dart';
+
 class DetailProductController extends GetxController {
-  //TODO: Implement DetailProductController
+   final umumc = Get.find<UmumController>();
+  var id_product_detail = "".obs;
 
   final count = 0.obs;
   @override

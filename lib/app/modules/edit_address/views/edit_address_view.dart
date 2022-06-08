@@ -1,4 +1,5 @@
 import 'package:e_comerce_shoes/app/controllers/ongkir_controller.dart';
+import 'package:e_comerce_shoes/app/controllers/umum_controller.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -8,13 +9,9 @@ import '../controllers/edit_address_controller.dart';
 
 class EditAddressView extends GetView<EditAddressController> {
   final ongkirC = Get.find<OngkirController>();
-  String? idprovince;
-  RxString province = "Pilih Provinsi Anda".obs;
-  RxString district = "Pilih Kabupaten / Kota Anda".obs;
-  RxString subDistrict = "Pilih Kecamatan Anda".obs;
-  RxString postalCode = "----".obs;
-  List<String> listprovinsi = ["Sumatera Barat", "Bandung"];
+  final umumC = Get.find<UmumController>();
 
+  List<String> listprovinsi = ["Sumatera Barat", "Bandung"];
   @override
   Widget build(BuildContext context) {
     ProvinceBox(context) {
@@ -55,9 +52,16 @@ class EditAddressView extends GetView<EditAddressController> {
                   children: [
                     ...ongkirC.listProvince.map((e) => GestureDetector(
                           onTap: () {
-                            province.value = e.province.toString();
-                            idprovince = e.provinceId.toString();
-                            district.value = "Pilih Kabupaten / Kota Anda";
+                            controller.province.value = e.province.toString();
+                            controller.idprovince = e.provinceId.toString();
+                            controller.district.value =
+                                "Pilih Kabupaten / Kota Anda";
+                            controller.subDistrict.value =
+                                "Pilih Kecamatan Anda";
+                            controller.postalCode.value = "----";
+                            controller.idCity = null;
+                            controller.idSubdistrict = null;
+                            print(e.provinceId);
                             Get.back();
                           },
                           child: Container(
@@ -111,13 +115,21 @@ class EditAddressView extends GetView<EditAddressController> {
                 height: 20,
               ),
               FutureBuilder(
-                  future: ongkirC.getCity(idprovince!),
+                  future: ongkirC.getCity(controller.idprovince!),
                   builder: (context, snapshot) {
                     return Column(
                       children: [
                         ...ongkirC.listCity.map((e) => GestureDetector(
                               onTap: () {
-                                district.value = e.cityName.toString();
+                                controller.district.value =
+                                    e.cityName.toString();
+                                controller.idCity = e.cityId.toString();
+                                controller.subDistrict.value =
+                                    "Pilih Kecamatan Anda";
+                                controller.idSubdistrict = null;
+                                print(controller.idCity);
+                                controller.postalCode.value =
+                                    e.postalCode.toString();
                                 Get.back();
                               },
                               child: Container(
@@ -170,20 +182,30 @@ class EditAddressView extends GetView<EditAddressController> {
               SizedBox(
                 height: 20,
               ),
-              ...listprovinsi.map((e) => GestureDetector(
-                    onTap: () {
-                      province.value = e.obs.string;
-                      Get.back();
-                    },
-                    child: Container(
-                        padding: EdgeInsets.all(10),
-                        width: double.infinity,
-                        decoration: BoxDecoration(),
-                        child: Text(
-                          e,
-                          style: labelStyle,
-                        )),
-                  ))
+              FutureBuilder(
+                  future: ongkirC.getSubdistrict(controller.idCity!),
+                  builder: (context, snapshot) {
+                    return Column(
+                      children: [
+                        ...ongkirC.listSubdistrict.map((e) => GestureDetector(
+                              onTap: () {
+                                controller.subDistrict.value =
+                                    e.subdistrictName.toString();
+                                controller.idSubdistrict = e.id.toString();
+                                Get.back();
+                              },
+                              child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(),
+                                  child: Text(
+                                    e.subdistrictName.toString(),
+                                    style: labelStyle,
+                                  )),
+                            ))
+                      ],
+                    );
+                  })
             ]))
           ],
         )),
@@ -223,7 +245,7 @@ class EditAddressView extends GetView<EditAddressController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "${province.value}",
+                        "${controller.province.value}",
                         style: ProductCategoryStyle.copyWith(fontSize: 14),
                       ),
                       Icon(
@@ -256,11 +278,18 @@ class EditAddressView extends GetView<EditAddressController> {
             GestureDetector(
               onTap: () {
                 // print(idprovince);
-
-                showDialog(
-                  context: context,
-                  builder: (context) => districtBox(context),
-                );
+                if (controller.idprovince != null) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => districtBox(context),
+                  );
+                } else {
+                  Get.snackbar("Field Provinsi Kosong",
+                      "Field Provinsi Tidak Boleh Kosong",
+                      backgroundColor: Color.fromARGB(255, 249, 179, 118),
+                      colorText: Colors.white,
+                      snackStyle: SnackStyle.FLOATING);
+                }
               },
               child: Container(
                 padding: EdgeInsets.all(10),
@@ -274,7 +303,7 @@ class EditAddressView extends GetView<EditAddressController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "${district.value}",
+                        "${controller.district.value}",
                         style: ProductCategoryStyle.copyWith(fontSize: 14),
                       ),
                       Icon(
@@ -306,10 +335,18 @@ class EditAddressView extends GetView<EditAddressController> {
             ),
             GestureDetector(
               onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => subdistrictBox(context),
-                );
+                if (controller.idCity != null) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => subdistrictBox(context),
+                  );
+                } else {
+                  Get.snackbar(
+                      "Field City Kosong", "Field City Tidak Boleh Kosong",
+                      backgroundColor: Color.fromARGB(255, 249, 179, 118),
+                      colorText: Colors.white,
+                      snackStyle: SnackStyle.FLOATING);
+                }
               },
               child: Container(
                 padding: EdgeInsets.all(10),
@@ -323,7 +360,7 @@ class EditAddressView extends GetView<EditAddressController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "${subDistrict.value}",
+                        "${controller.subDistrict.value}",
                         style: ProductCategoryStyle.copyWith(fontSize: 14),
                       ),
                       Icon(
@@ -362,7 +399,7 @@ class EditAddressView extends GetView<EditAddressController> {
               height: 45,
               child: Obx(
                 () => Text(
-                  "${postalCode.value}",
+                  "${controller.postalCode.value}",
                   style: ProductCategoryStyle.copyWith(fontSize: 14),
                 ),
               ),
@@ -386,6 +423,7 @@ class EditAddressView extends GetView<EditAddressController> {
               height: 4,
             ),
             TextField(
+              controller: controller.detailC,
               keyboardType: TextInputType.multiline,
               textInputAction: TextInputAction.newline,
               decoration: InputDecoration(
@@ -411,85 +449,105 @@ class EditAddressView extends GetView<EditAddressController> {
       );
     }
 
-    return Scaffold(
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              elevation: 0,
-              pinned: true,
-              backgroundColor: Colors.white,
-              actions: [
-                Container(
-                    margin: EdgeInsets.only(right: 29),
-                    child: Icon(
-                      Icons.check,
-                      color: primaryColor,
-                      size: 25,
-                    ))
-              ],
-              leading: GestureDetector(
-                onTap: () {
-                  Get.back();
-                },
-                child: Icon(
-                  Icons.close,
-                  color: primaryColor,
-                ),
-              ),
-              flexibleSpace: Container(
-                child: Center(
-                  child: Text(
-                    "Edit Address",
-                    style: ProductNameStyle.copyWith(fontSize: 18),
+    return FutureBuilder(
+        future: controller.getAddressUser(umumC.user.value.id.toString()),
+        builder: (context, snapshot) {
+          return Scaffold(
+            body: SafeArea(
+              child: CustomScrollView(
+                slivers: [
+                  SliverAppBar(
+                    elevation: 0,
+                    pinned: true,
+                    backgroundColor: Colors.white,
+                    actions: [
+                      GestureDetector(
+                        onTap: () {
+                          
+                          controller.idprovince!.isEmpty ?
+                          ongkirC.AddAddress(
+                              umumC.user.value.id.toString(),
+                              controller.idprovince!,
+                              controller.province.value,
+                              controller.idCity!,
+                              controller.district.value,
+                              controller.idSubdistrict!,
+                              controller.subDistrict.value,
+                              controller.postalCode.value,
+                              controller.detailC.text) : Get.back(); 
+                        },
+                        child: Container(
+                            margin: EdgeInsets.only(right: 29),
+                            child: Icon(
+                              Icons.check,
+                              color: primaryColor,
+                              size: 25,
+                            )),
+                      )
+                    ],
+                    leading: GestureDetector(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: Icon(
+                        Icons.close,
+                        color: primaryColor,
+                      ),
+                    ),
+                    flexibleSpace: Container(
+                      child: Center(
+                        child: Text(
+                          "Edit Address",
+                          style: ProductNameStyle.copyWith(fontSize: 18),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  SliverList(
+                      delegate: SliverChildListDelegate([
+                    SizedBox(
+                      height: 38,
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 24),
+                      child: _ProvinsiDropDown(),
+                    ),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 24),
+                      child: _DistrictDropDown(),
+                    ),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 24),
+                      child: _SubdistrictDropDown(),
+                    ),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 24),
+                      child: _PostalCode(),
+                    ),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 24),
+                      child: _detailAddress(),
+                    ),
+                    SizedBox(
+                      height: 24,
+                    ),
+                  ]))
+                ],
               ),
             ),
-            SliverList(
-                delegate: SliverChildListDelegate([
-              SizedBox(
-                height: 38,
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 24),
-                child: _ProvinsiDropDown(),
-              ),
-              SizedBox(
-                height: 24,
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 24),
-                child: _DistrictDropDown(),
-              ),
-              SizedBox(
-                height: 24,
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 24),
-                child: _SubdistrictDropDown(),
-              ),
-              SizedBox(
-                height: 24,
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 24),
-                child: _PostalCode(),
-              ),
-              SizedBox(
-                height: 24,
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 24),
-                child: _detailAddress(),
-              ),
-              SizedBox(
-                height: 24,
-              ),
-            ]))
-          ],
-        ),
-      ),
-    );
+          );
+        });
   }
 }

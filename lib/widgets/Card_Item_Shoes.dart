@@ -1,17 +1,25 @@
 part of 'widgets.dart';
 
 class CardItemShoes extends StatefulWidget {
-  CardItemShoes({Key? key}) : super(key: key);
+  final Product product;
+  CardItemShoes(this.product);
 
   @override
   State<CardItemShoes> createState() => _CardItemShoesState();
 }
 
 class _CardItemShoesState extends State<CardItemShoes> {
+  final umumc = Get.find<UmumController>();
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
+        umumc.listProductsDetail.clear();
+        umumc.listProductImage.clear();
+        umumc.listProductImage.value = widget.product.productImage!;
+        umumc.listProductsDetail.value = widget.product.productDetails!;
+        umumc.product.value = widget.product; 
         Get.toNamed(Routes.DETAIL_PRODUCT);
       },
       child: Container(
@@ -34,7 +42,7 @@ class _CardItemShoesState extends State<CardItemShoes> {
                               topLeft: Radius.circular(15),
                               topRight: Radius.circular(15)),
                           image: DecorationImage(
-                              image: AssetImage("assets/test.jpg"),
+                              image: NetworkImage(baseUrl+"product/image/"+widget.product.productImage!.first.urlImage.toString()),
                               fit: BoxFit.cover)),
                     ),
                     Align(
@@ -67,18 +75,18 @@ class _CardItemShoesState extends State<CardItemShoes> {
                         height: 7,
                       ),
                       Text(
-                        "Converse x Gorillaz ",
+                        widget.product.name!,
                         style: ProductNameStyle,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Converse",
+                            widget.product.category!.category.toString(),
                             style: ProductCategoryStyle,
                           ),
                           Text(
-                            "Rp. 400.000",
+                            "Rp. ${widget.product.harga}",
                             style: labelStyle.copyWith(fontSize: 10),
                           )
                         ],
