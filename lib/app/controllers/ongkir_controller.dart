@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:e_comerce_shoes/app/controllers/umum_controller.dart';
+import 'package:e_comerce_shoes/app/data/models/Ongkir_pilih_model.dart';
 import 'package:e_comerce_shoes/app/data/models/address_model.dart';
+import 'package:e_comerce_shoes/app/data/models/ongkir_model.dart';
 import 'package:e_comerce_shoes/app/data/models/subdistrict_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,6 +20,8 @@ class OngkirController extends GetxController {
   var listProvince = <Province>[].obs;
   var listCity = <Kota>[].obs;
   var listSubdistrict = <Subdistrict>[].obs;
+  var listOngkir = <Ongkir>[].obs;
+  var ongkirPilih = OngkirPilih().obs;
   var header = {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ' + box.read("token"),
@@ -93,7 +97,7 @@ class OngkirController extends GetxController {
       "postal_code": postalCode,
       "detail_address": detailAddress,
     });
-
+    print(response.body);
     if (response.statusCode == 200) {
       Get.back();
     } else {
@@ -103,6 +107,7 @@ class OngkirController extends GetxController {
           snackStyle: SnackStyle.FLOATING);
     }
   }
+
   Future<void> getAddress(String id_user) async {
     String url = baseUrl + "api/auth/Address/" + id_user;
     final response = await http.get(Uri.parse(url), headers: header);
@@ -110,6 +115,24 @@ class OngkirController extends GetxController {
     address.value = Address.fromJson(data["data"]);
     address.refresh;
     print(response.body);
+  }
 
+  Future<RxList<Ongkir>> getOngkir(String destinationCode, int berat) async {
+    String url = baseUrl + "ongkir/${destinationCode}/${berat}";
+    final response = await http.get(
+      Uri.parse(url),
+    );
+    var data = jsonDecode(response.body);
+    print(response.body);
+    List dataList = data['data']["results"] as List;
+    RxList<Ongkir> _ongkir =
+        dataList.map((e) => Ongkir.fromJson(e)).toList().obs;
+    listOngkir.value = _ongkir;
+    print(listOngkir.value.first.costs!.first.description);
+    ongkirPilih.value = OngkirPilih(
+        code: _ongkir.first.code,
+        cost: _ongkir.first.costs!.first,
+        name: _ongkir.first.name);
+    return listOngkir;
   }
 }

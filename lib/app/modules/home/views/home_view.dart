@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:e_comerce_shoes/app/data/models/product_model.dart';
 import 'package:e_comerce_shoes/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -11,19 +12,18 @@ import '../../../routes/app_pages.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
-  final umumC = Get.find<UmumController>();
   @override
   Widget build(BuildContext context) {
     Widget _category() {
       return FutureBuilder(
-          future: umumC.getCategory(),
+          future: controller.umumC.getCategory(),
           builder: (context, snapshot) {
             return Container(
               height: 120,
               padding: EdgeInsets.all(20),
               width: double.infinity,
               child: Obx(() => ListView.builder(
-                    itemCount: umumC.categories.length,
+                    itemCount: controller.umumC.categories.length,
                     itemBuilder: (context, index) => GestureDetector(
                       onTap: () {
                         Get.toNamed(Routes.FILTER_CATEGORY);
@@ -37,7 +37,7 @@ class HomeView extends GetView<HomeController> {
                             image: DecorationImage(
                                 image: NetworkImage(baseUrl +
                                     "category/image" +
-                                    umumC.categories.value[index].urlPhoto!),
+                                    controller.umumC.categories.value[index].urlPhoto!),
                                 fit: BoxFit.cover)),
                       ),
                     ),
@@ -126,7 +126,7 @@ class HomeView extends GetView<HomeController> {
                   Obx(() => SizedBox(
                         width: MediaQuery.of(context).size.width - 140,
                         child: Text(
-                          "Hi ${umumC.user.value.fullName}",
+                          "Hi ${controller.umumC.user.value.fullName}",
                           style: NameStyle.copyWith(fontSize: 22),
                           maxLines: 1,
                         ),
@@ -177,61 +177,68 @@ class HomeView extends GetView<HomeController> {
     }
 
     return Scaffold(
-        body: SafeArea(
-      child: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-              elevation: 0,
-              pinned: true,
-              automaticallyImplyLeading: false,
-              backgroundColor: Colors.white,
-              flexibleSpace: header()),
-          SliverList(
-              delegate: SliverChildListDelegate([
-            SizedBox(
-              height: 24,
-            ),
-            _DataUser(),
-            SizedBox(
-              height: 24,
-            ),
-            _carausel(),
-            SizedBox(
-              height: 14,
-            ),
-            _category(),
-            SizedBox(
-              height: 24,
-            ),
-            Center(
-              child: StreamBuilder<void>(
-                stream: umumC.getProductsStream(),
-                builder: (context, snapshot) {
-                  if(snapshot.connectionState ==ConnectionState.waiting){
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }else{
-                  return Wrap(
-                    children: [
-                     ...umumC.listProducts.map((element) =>  Container(
-                        child: Column(
-                          children: [
-                            CardItemShoes(element),
-                            SizedBox(
-                              width: 10,
-                            ),
-                          ],
-                        ),
-                      ),).toList()
-                    ],
-                  );}
-                }
+        body: RefreshIndicator(
+          onRefresh: () async { 
+            controller.getProducts();
+            controller.umumC.getCategory();
+           },
+           
+          child: SafeArea(
+              child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+                elevation: 0,
+                pinned: true,
+                automaticallyImplyLeading: false,
+                backgroundColor: Colors.white,
+                flexibleSpace: header()),
+            SliverList(
+                delegate: SliverChildListDelegate([
+              SizedBox(
+                height: 24,
               ),
-            )
-          ]))
-        ],
-      ),
-    ));
+              _DataUser(),
+              SizedBox(
+                height: 24,
+              ),
+              _carausel(),
+              SizedBox(
+                height: 14,
+              ),
+              _category(),
+              SizedBox(
+                height: 24,
+              ),
+              Center(
+                child: FutureBuilder<List<Product>>(
+                  future: controller.getProducts(),
+                  builder: (context, snapshot) {
+                    if(snapshot.connectionState ==ConnectionState.waiting){
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }else{
+                    return Wrap(
+                      children: [
+                       ...controller.umumC.listProducts.map((element) =>  Container(
+                          child: Column(
+                            children: [
+                              CardItemShoes(element),
+                              SizedBox(
+                                width: 10,
+                              ),
+                            ],
+                          ),
+                        ),).toList()
+                      ],
+                    );}
+                  }
+                ),
+              )
+            ]))
+          ],
+              ),
+            ),
+        ));
   }
 }

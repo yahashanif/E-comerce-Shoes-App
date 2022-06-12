@@ -7,8 +7,11 @@ class CardItemMyOrders extends StatefulWidget {
   @override
   State<CardItemMyOrders> createState() => _CardItemMyOrdersState();
 }
-
+final Uri _url = Uri.parse('https://app.sandbox.midtrans.com/snap/v2/vtweb/4ec8daff-04a6-4e9c-9dbd-d9ceecac12b0');
 class _CardItemMyOrdersState extends State<CardItemMyOrders> {
+  void _launchUrl() async {
+  if (!await launchUrl(_url)) throw 'Could not launch $_url';
+}
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -118,33 +121,38 @@ class _CardItemMyOrdersState extends State<CardItemMyOrders> {
           ),
           widget.isPay == true
               ? SizedBox()
-              : Container(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 11,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                            height: 24,
-                            width: 100,
-                            decoration: BoxDecoration(
-                                color: primaryColor,
-                                borderRadius: BorderRadius.circular(5)),
-                            child: Center(
-                              child: Text(
-                                "Pay now",
-                                style: buttonStyle.copyWith(fontSize: 10),
+              : GestureDetector(
+                onTap: (){
+                  _launchUrl();
+                },
+                child: Container(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 11,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              height: 24,
+                              width: 100,
+                              decoration: BoxDecoration(
+                                  color: primaryColor,
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: Center(
+                                child: Text(
+                                  "Pay now",
+                                  style: buttonStyle.copyWith(fontSize: 10),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      )
-                    ],
+                          ],
+                        )
+                      ],
+                    ),
                   ),
-                )
+              )
         ],
       ),
     );

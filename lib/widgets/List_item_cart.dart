@@ -3,11 +3,13 @@ part of 'widgets.dart';
 class ListItem extends StatefulWidget {
   final bool? isCart;
   final bool? isFavorite;
+  final bool? isCheckout;
   final Cart? cart;
   final Product? product;
   ListItem({
     this.isCart = false,
     this.isFavorite = false,
+    this.isCheckout = false,
     this.cart,
     this.product,
   });
@@ -41,7 +43,7 @@ class _ListItemState extends State<ListItem> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
                         image: DecorationImage(
-                            image: widget.isCart == true
+                            image: widget.isCart == true || widget.isCheckout! 
                                 ? NetworkImage(baseUrl +
                                     "product/image/" +
                                     widget.cart!.product!.productImage!.first
@@ -60,14 +62,18 @@ class _ListItemState extends State<ListItem> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                       widget.isCart == true ? "${widget.cart!.product!.name}" :  "${widget.product!.name}",
+                        widget.isCart == true
+                            ? "${widget.cart!.product!.name}"
+                            : "${widget.product!.name}",
                         style: ProductNameStyle.copyWith(fontSize: 14),
                       ),
                       SizedBox(
                         height: 4,
                       ),
                       Text(
-                          widget.isCart == true ? "Rp. ${widget.cart!.product!.harga}" :  "Rp. ${widget.product!.harga}",
+                        widget.isCart == true
+                            ? "Rp. ${widget.cart!.product!.harga}"
+                            : "Rp. ${widget.product!.harga}",
                         style: labelStyle.copyWith(fontSize: 12),
                       ),
                       SizedBox(
@@ -92,33 +98,39 @@ class _ListItemState extends State<ListItem> {
                 ],
               ),
               widget.isCart!
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                            onTap: () {
-                              umumC.addQuantityCart(
-                                  widget.cart!.productDetail!.id.toString());
-                            },
-                            child:
-                                Image.asset("assets/icons/add.png", width: 15)),
-                        SizedBox(
-                          height: 7,
-                        ),
-                        Text("${widget.cart!.quantity}"),
-                        SizedBox(
-                          height: 7,
-                        ),
-                        GestureDetector(
-                            onTap: () {
-                              umumC.MinQuantityCart(
-                                  widget.cart!.productDetail!.id.toString());
-                            },
-                            child:
-                                Image.asset("assets/icons/min.png", width: 15)),
-                      ],
-                    )
-                  : widget.isFavorite!
+                  ? widget.isCheckout!
+                      ?  Text("${widget.cart!.quantity} Item",
+                          style: ProductCategoryStyle.copyWith(fontSize: 14,color: greenBlackColor),)
+                      : widget.isCheckout! ? SizedBox() : Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                                onTap: () {
+                                  umumC.addQuantityCart(widget
+                                      .cart!.productDetail!.id
+                                      .toString());
+                                },
+                                child: Image.asset("assets/icons/add.png",
+                                    width: 15)),
+                            SizedBox(
+                              height: 7,
+                            ),
+                            Text("${widget.cart!.quantity}",
+                          style: ProductCategoryStyle.copyWith(fontSize: 12),),
+                            SizedBox(
+                              height: 7,
+                            ),
+                            GestureDetector(
+                                onTap: () {
+                                  umumC.MinQuantityCart(widget
+                                      .cart!.productDetail!.id
+                                      .toString());
+                                },
+                                child: Image.asset("assets/icons/min.png",
+                                    width: 15)),
+                          ],
+                        )
+                  : widget.isFavorite! 
                       ? Container(
                           height: 40,
                           width: 40,
@@ -130,8 +142,8 @@ class _ListItemState extends State<ListItem> {
                             color: primaryColor,
                           ),
                         )
-                      : Text(
-                          "100 Items",
+                      :  Text(
+                          "${widget.cart!.quantity} Items",
                           style: ProductCategoryStyle.copyWith(fontSize: 12),
                         )
             ],
@@ -139,18 +151,25 @@ class _ListItemState extends State<ListItem> {
           SizedBox(
             height: 10,
           ),
-          widget.isCart!
-              ? Row(
-                  children: [
-                    Image.asset("assets/icons/trash.png", width: 15),
-                    Text(
-                      "Remove",
-                      style: ProductNameStyle.copyWith(
-                          fontSize: 8, color: removeColor),
-                    ),
-                  ],
+          widget.isCart! && widget.isCheckout == false 
+              ? GestureDetector(
+                  onTap: () {
+                    umumC.DeleteCart(widget.cart!.productDetail!.id.toString());
+                  },
+                  child: Row(
+                    children: [
+                      Image.asset("assets/icons/trash.png", width: 15),
+                      Text(
+                        "Remove",
+                        style: ProductNameStyle.copyWith(
+                            fontSize: 8, color: removeColor),
+                      ),
+                    ],
+                  ),
                 )
-              : SizedBox()
+              : widget.isCheckout! && widget.isCheckout!
+                  ? SizedBox()
+                  : SizedBox()
         ],
       ),
     );

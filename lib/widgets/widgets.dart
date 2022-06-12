@@ -4,6 +4,7 @@ import 'package:e_comerce_shoes/app/data/models/product_model.dart';
 import 'package:e_comerce_shoes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../app/routes/app_pages.dart';
 

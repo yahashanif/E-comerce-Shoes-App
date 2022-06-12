@@ -1,4 +1,6 @@
+import 'package:e_comerce_shoes/app/controllers/ongkir_controller.dart';
 import 'package:e_comerce_shoes/app/controllers/umum_controller.dart';
+import 'package:e_comerce_shoes/app/data/models/cart_model.dart';
 import 'package:e_comerce_shoes/theme.dart';
 import 'package:e_comerce_shoes/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,8 @@ import '../controllers/cart_controller.dart';
 
 class CartView extends GetView<CartController> {
   final umumC = Get.find<UmumController>();
+  final ongkirC = Get.find<OngkirController>();
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +48,10 @@ class CartView extends GetView<CartController> {
                 delegate: SliverChildListDelegate([
               Container(
                 margin: EdgeInsets.only(top: 5, right: 30, left: 30),
-                child: StreamBuilder<void>(
-                    stream: umumC.getCartStream(),
+                child: FutureBuilder<RxList<Cart>>(
+                    future: umumC.getCart(),
                     builder: (context, snapshot) {
-                      return Column(
+                      return Obx(() =>  Column(
                         children: [
                           ...umumC.listCart.map((element) {
                             return ListItem(
@@ -56,7 +60,7 @@ class CartView extends GetView<CartController> {
                             );
                           }).toList()
                         ],
-                      );
+                      ));
                     }),
               )
             ]))
@@ -126,6 +130,8 @@ class CartView extends GetView<CartController> {
             Spacer(),
             GestureDetector(
               onTap: () {
+                umumC.getAddressUser();
+                ongkirC.getOngkir(umumC.idCity.toString(), umumC.jumitem.toInt() * 1000);
                 Get.toNamed(Routes.CHECKOUT);
               },
               child: Container(

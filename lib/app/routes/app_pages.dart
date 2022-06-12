@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import 'package:e_comerce_shoes/app/modules/ListKurir/bindings/list_kurir_binding.dart';
+import 'package:e_comerce_shoes/app/modules/ListKurir/views/list_kurir_view.dart';
 import 'package:e_comerce_shoes/app/modules/My_Orders/bindings/my_orders_binding.dart';
 import 'package:e_comerce_shoes/app/modules/My_Orders/views/my_orders_view.dart';
 import 'package:e_comerce_shoes/app/modules/cart/bindings/cart_binding.dart';
@@ -106,6 +108,11 @@ class AppPages {
       name: _Paths.MY_ORDERS,
       page: () => MyOrdersView(),
       binding: MyOrdersBinding(),
+    ),
+    GetPage(
+      name: _Paths.LIST_KURIR,
+      page: () => ListKurirView(),
+      binding: ListKurirBinding(),
     ),
   ];
 }

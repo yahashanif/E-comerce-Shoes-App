@@ -14,6 +14,11 @@ class EditAddressView extends GetView<EditAddressController> {
   List<String> listprovinsi = ["Sumatera Barat", "Bandung"];
   @override
   Widget build(BuildContext context) {
+    if (umumC.detailAddress != null) {
+      controller.detailC.text = umumC.detailAddress.toString();
+    } else {
+      controller.detailC.text = "";
+    }
     ProvinceBox(context) {
       return Scaffold(
         body: Container(
@@ -25,7 +30,7 @@ class EditAddressView extends GetView<EditAddressController> {
               backgroundColor: Colors.white,
               leading: GestureDetector(
                 onTap: () {
-                  Get.back();
+                  umumC.getAddressUser().then((value) => Get.back());
                 },
                 child: Icon(
                   Icons.close,
@@ -52,15 +57,14 @@ class EditAddressView extends GetView<EditAddressController> {
                   children: [
                     ...ongkirC.listProvince.map((e) => GestureDetector(
                           onTap: () {
-                            controller.province.value = e.province.toString();
-                            controller.idprovince = e.provinceId.toString();
-                            controller.district.value =
+                            umumC.province.value = e.province.toString();
+                            umumC.idprovince = e.provinceId.toString();
+                            umumC.district.value =
                                 "Pilih Kabupaten / Kota Anda";
-                            controller.subDistrict.value =
-                                "Pilih Kecamatan Anda";
-                            controller.postalCode.value = "----";
-                            controller.idCity = null;
-                            controller.idSubdistrict = null;
+                            umumC.subDistrict.value = "Pilih Kecamatan Anda";
+                            umumC.postalCode.value = "----";
+                            umumC.idCity = null;
+                            umumC.idSubdistrict = null;
                             print(e.provinceId);
                             Get.back();
                           },
@@ -115,20 +119,19 @@ class EditAddressView extends GetView<EditAddressController> {
                 height: 20,
               ),
               FutureBuilder(
-                  future: ongkirC.getCity(controller.idprovince!),
+                  future: ongkirC.getCity(umumC.idprovince!),
                   builder: (context, snapshot) {
                     return Column(
                       children: [
                         ...ongkirC.listCity.map((e) => GestureDetector(
                               onTap: () {
-                                controller.district.value =
-                                    e.cityName.toString();
-                                controller.idCity = e.cityId.toString();
-                                controller.subDistrict.value =
+                                umumC.district.value = e.cityName.toString();
+                                umumC.idCity = e.cityId.toString();
+                                umumC.subDistrict.value =
                                     "Pilih Kecamatan Anda";
-                                controller.idSubdistrict = null;
-                                print(controller.idCity);
-                                controller.postalCode.value =
+                                umumC.idSubdistrict = null;
+                                print(umumC.idCity);
+                                umumC.postalCode.value =
                                     e.postalCode.toString();
                                 Get.back();
                               },
@@ -183,15 +186,15 @@ class EditAddressView extends GetView<EditAddressController> {
                 height: 20,
               ),
               FutureBuilder(
-                  future: ongkirC.getSubdistrict(controller.idCity!),
+                  future: ongkirC.getSubdistrict(umumC.idCity!),
                   builder: (context, snapshot) {
                     return Column(
                       children: [
                         ...ongkirC.listSubdistrict.map((e) => GestureDetector(
                               onTap: () {
-                                controller.subDistrict.value =
+                                umumC.subDistrict.value =
                                     e.subdistrictName.toString();
-                                controller.idSubdistrict = e.id.toString();
+                                umumC.idSubdistrict = e.id.toString();
                                 Get.back();
                               },
                               child: Container(
@@ -227,7 +230,6 @@ class EditAddressView extends GetView<EditAddressController> {
             ),
             GestureDetector(
               onTap: () {
-                ongkirC.getProvince();
                 showDialog(
                   context: context,
                   builder: (context) => ProvinceBox(context),
@@ -245,7 +247,7 @@ class EditAddressView extends GetView<EditAddressController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "${controller.province.value}",
+                        "${umumC.province.value}",
                         style: ProductCategoryStyle.copyWith(fontSize: 14),
                       ),
                       Icon(
@@ -278,7 +280,7 @@ class EditAddressView extends GetView<EditAddressController> {
             GestureDetector(
               onTap: () {
                 // print(idprovince);
-                if (controller.idprovince != null) {
+                if (umumC.idprovince != null) {
                   showDialog(
                     context: context,
                     builder: (context) => districtBox(context),
@@ -303,7 +305,7 @@ class EditAddressView extends GetView<EditAddressController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "${controller.district.value}",
+                        "${umumC.district.value}",
                         style: ProductCategoryStyle.copyWith(fontSize: 14),
                       ),
                       Icon(
@@ -335,7 +337,7 @@ class EditAddressView extends GetView<EditAddressController> {
             ),
             GestureDetector(
               onTap: () {
-                if (controller.idCity != null) {
+                if (umumC.idCity != null) {
                   showDialog(
                     context: context,
                     builder: (context) => subdistrictBox(context),
@@ -360,7 +362,7 @@ class EditAddressView extends GetView<EditAddressController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "${controller.subDistrict.value}",
+                        "${umumC.subDistrict.value}",
                         style: ProductCategoryStyle.copyWith(fontSize: 14),
                       ),
                       Icon(
@@ -399,7 +401,7 @@ class EditAddressView extends GetView<EditAddressController> {
               height: 45,
               child: Obx(
                 () => Text(
-                  "${controller.postalCode.value}",
+                  "${umumC.postalCode.value}",
                   style: ProductCategoryStyle.copyWith(fontSize: 14),
                 ),
               ),
@@ -450,7 +452,7 @@ class EditAddressView extends GetView<EditAddressController> {
     }
 
     return FutureBuilder(
-        future: controller.getAddressUser(umumC.user.value.id.toString()),
+        future: umumC.getAddressUser(),
         builder: (context, snapshot) {
           return Scaffold(
             body: SafeArea(
@@ -463,18 +465,19 @@ class EditAddressView extends GetView<EditAddressController> {
                     actions: [
                       GestureDetector(
                         onTap: () {
-                          
-                          controller.idprovince!.isEmpty ?
-                          ongkirC.AddAddress(
-                              umumC.user.value.id.toString(),
-                              controller.idprovince!,
-                              controller.province.value,
-                              controller.idCity!,
-                              controller.district.value,
-                              controller.idSubdistrict!,
-                              controller.subDistrict.value,
-                              controller.postalCode.value,
-                              controller.detailC.text) : Get.back(); 
+
+                          umumC.address == false
+                              ? ongkirC.AddAddress(
+                                  umumC.user.value.id.toString(),
+                                  umumC.idprovince!,
+                                  umumC.province.value,
+                                  umumC.idCity!,
+                                  umumC.district.value,
+                                  umumC.idSubdistrict!,
+                                  umumC.subDistrict.value,
+                                  umumC.postalCode.value,
+                                  controller.detailC.text)
+                              : Get.back();
                         },
                         child: Container(
                             margin: EdgeInsets.only(right: 29),

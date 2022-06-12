@@ -25,15 +25,18 @@ class UmumController extends GetxController {
   var jumitem = 0.obs;
   var listProductFavorite = <Product>[].obs;
 
+  // Address
+  var province = "Pilih Provinsi Anda".obs;
+  var district = "Pilih Kabupaten / Kota Anda".obs;
+  var subDistrict = "Pilih Kecamatan Anda".obs;
+  var postalCode = "----".obs;
+  bool address = false;
 
-  Stream<void> getProductsStream() {
-    return Stream.periodic(Duration(seconds: 1))
-        .asyncMap((event) => getProducts());
-  }
-  Stream<void> getCartStream() {
-    return Stream.periodic(Duration(seconds: 1))
-        .asyncMap((event) => getCart(user.value.id.toString()));
-  }
+  String? idprovince;
+  String? idCity;
+  String? idSubdistrict;
+  String? detailAddress;
+
   Stream<void> getFavoriteStream() {
     return Stream.periodic(Duration(seconds: 1))
         .asyncMap((event) => getProductsFavorite());
@@ -57,6 +60,8 @@ class UmumController extends GetxController {
       box.write("id_user", data["data"]["data"]["id"]);
       print(box.read("token"));
       if (box.read("token") != null) {
+        getAddressUser();
+
         Get.toNamed(Routes.MainPage);
       } else {
         Get.snackbar("Login Gagal", "Username Or Password Wrong");
@@ -84,6 +89,7 @@ class UmumController extends GetxController {
       var data = jsonDecode(response.body);
       if (response.statusCode == 200) {
         user.value = User.fromJson(data["data"]);
+        getAddressUser();
         Get.offAllNamed(Routes.MainPage);
       } else {
         Get.offAllNamed(Routes.LOGIN);
@@ -114,28 +120,6 @@ class UmumController extends GetxController {
     }).toList();
   }
 
-  Future<void> getProducts() async {
-    listProducts.clear();
-    var header = {
-      "Accept": "application/json",
-      "Authorization": "Bearer " + box.read("token")
-    };
-    String url = baseUrl + "api/auth/products";
-    print(url);
-    final response = await http.get(
-      Uri.parse(url),
-      headers: header,
-    );
-    var data = jsonDecode(response.body);
-    print(response.body);
-    List dataList = data['data'] as List;
-    List<Product> _products = dataList.map((e) => Product.fromJson(e)).toList();
-    _products.map((e) {
-      listProducts.add(e);
-      listProducts.refresh();
-    }).toList();
-  }
-
   Future<void> AddCart(String id_product_detail, String quantity) async {
     var header = {
       "Accept": "application/json",
@@ -148,21 +132,20 @@ class UmumController extends GetxController {
       "id_product_detail": id_product_detail,
       "quantity": quantity,
     });
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       Get.toNamed(Routes.CART);
     }
   }
 
-  
-  Future<void> getCart(String id_user) async {
+  Future<RxList<Cart>> getCart() async {
     listCart.clear();
-        subtotal.value = 0;
-        jumitem.value = 0;
+    subtotal.value = 0;
+    jumitem.value = 0;
     var header = {
       "Accept": "application/json",
       "Authorization": "Bearer " + box.read("token")
     };
-    String url = baseUrl + "api/auth/cart/"+id_user;
+    String url = baseUrl + "api/auth/cart/" + user.value.id.toString();
     print(url);
     final response = await http.get(
       Uri.parse(url),
@@ -171,41 +154,64 @@ class UmumController extends GetxController {
     var data = jsonDecode(response.body);
     print(response.body);
     List dataList = data['data'] as List;
-    List<Cart> _cart =
-        dataList.map((e) => Cart.fromJson(e)).toList();
+    RxList<Cart> _cart = dataList.map((e) => Cart.fromJson(e)).toList().obs;
     _cart.map((e) {
       subtotal.value += e.product!.harga!.toInt() * e.quantity!.toInt();
       jumitem.value += e.quantity!.toInt();
-      listCart.add(e);
-      listCart.refresh();
+      //   listCart.add(e);
+      //   listCart.refresh();
     }).toList();
+
+    listCart.value = _cart;
+    listCart.refresh();
+    return listCart;
   }
 
-  Future<void> addQuantityCart(String id_product_detail) async{
-     var header = {
+  Future<void> addQuantityCart(String id_product_detail) async {
+    var header = {
       "Accept": "application/json",
       "Authorization": "Bearer " + box.read("token")
     };
-     String url = baseUrl + "api/auth/addQuantityCart";
+    String url = baseUrl + "api/auth/addQuantityCart";
     print(url);
     final response = await http.post(Uri.parse(url), headers: header, body: {
       "id_user": user.value.id.toString(),
       "id_product_detail": id_product_detail,
     });
-  
+    if (response.statusCode == 200) {
+      getCart();
+    }
   }
-  Future<void> MinQuantityCart(String id_product_detail) async{
-     var header = {
+
+  Future<void> MinQuantityCart(String id_product_detail) async {
+    var header = {
       "Accept": "application/json",
       "Authorization": "Bearer " + box.read("token")
     };
-     String url = baseUrl + "api/auth/minQuantityCart";
+    String url = baseUrl + "api/auth/minQuantityCart";
     print(url);
     final response = await http.post(Uri.parse(url), headers: header, body: {
       "id_user": user.value.id.toString(),
       "id_product_detail": id_product_detail,
     });
-  
+    if (response.statusCode == 200) {
+      getCart();
+    }
+  }
+
+  Future<void> DeleteCart(String id_product_detail) async {
+    var header = {
+      "Accept": "application/json",
+      "Authorization": "Bearer " + box.read("token")
+    };
+    String url = baseUrl +
+        "api/auth/deleteCart/${user.value.id.toString()}/${id_product_detail}";
+    print(url);
+    final response = await http.delete(Uri.parse(url), headers: header);
+    print(response.body);
+    if (response.statusCode == 200) {
+      getCart();
+    }
   }
 
   Future<void> getProductsFavorite() async {
@@ -214,7 +220,7 @@ class UmumController extends GetxController {
       "Accept": "application/json",
       "Authorization": "Bearer " + box.read("token")
     };
-    String url = baseUrl + "api/auth/favorite/"+user.value.id.toString();
+    String url = baseUrl + "api/auth/favorite/" + user.value.id.toString();
     print(url);
     final response = await http.get(
       Uri.parse(url),
@@ -230,6 +236,31 @@ class UmumController extends GetxController {
     }).toList();
   }
 
+  Future<void> getAddressUser() async {
+    var header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + box.read("token"),
+    };
+    String url = baseUrl + "api/auth/Address/" + user.value.id.toString();
+    final response = await http.get(Uri.parse(url), headers: header);
+    var data = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      province.value = data["data"]["province"];
+      district.value = data["data"]["city"];
+      subDistrict.value = data["data"]["subdstrict"];
+      postalCode.value = data["data"]["postal_code"];
+      detailAddress = data["data"]["detail_address"];
+      idprovince = data["data"]["id_province"];
+      idCity = data["data"]["id_city"];
+      idSubdistrict = data["data"]["id_subdistrict"];
+      address = true;
+    }else{
+      address = false;
+    }
+
+    print(response.body);
+  }
+
   var Navbar = 0.obs;
   final count = 0.obs;
   @override
@@ -241,6 +272,7 @@ class UmumController extends GetxController {
   @override
   void dispose() {
     Navbar.value = 0;
+
     super.dispose();
   }
 }

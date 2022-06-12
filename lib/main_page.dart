@@ -3,6 +3,9 @@ import 'package:e_comerce_shoes/app/modules/home/views/home_view.dart';
 import 'package:e_comerce_shoes/app/modules/profile/views/profile_view.dart';
 import 'package:e_comerce_shoes/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import 'app/modules/home/controllers/home_controller.dart';
 
 class MainPage extends StatefulWidget {
   int? bottomNavBarIndex;
@@ -13,7 +16,6 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   PageController? pageController;
-
   int _page = 0;
   @override
   void initState() {
@@ -24,6 +26,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    Get.lazyPut(() => HomeController());
     return Scaffold(
       body: PageView(
         controller: pageController,
