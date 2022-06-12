@@ -1,16 +1,18 @@
 import 'dart:convert';
 
 import 'package:e_comerce_shoes/app/data/models/cart_model.dart';
+import 'package:e_comerce_shoes/app/data/models/transaction_model.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 import '../data/models/categori_model_model.dart';
 import '../data/models/product_model.dart';
 import '../data/models/user_model.dart';
 import '../routes/app_pages.dart';
 
-String baseUrl = "http://192.168.100.30:9000/";
+String baseUrl = "http://10.234.153.45:9000/";
 
 class UmumController extends GetxController {
   final box = GetStorage();
@@ -24,6 +26,7 @@ class UmumController extends GetxController {
   var subtotal = 0.obs;
   var jumitem = 0.obs;
   var listProductFavorite = <Product>[].obs;
+  var id_Address = 0.obs;
 
   // Address
   var province = "Pilih Provinsi Anda".obs;
@@ -36,6 +39,48 @@ class UmumController extends GetxController {
   String? idCity;
   String? idSubdistrict;
   String? detailAddress;
+
+  Future<void> createTransaction(int total, int item, int id_address) async {
+    var object = {};
+    var requstD = [];
+
+    String url = baseUrl + "api/auth/transaction";
+    String tgl = "" +
+        DateTime.now().year.toString() +
+        "-" +
+        DateTime.now().month.toString() +
+        "-" +
+        DateTime.now().day.toString();
+    String jam =
+        "${DateTime.now().hour.toString()}:${DateTime.now().minute.toString()}:${DateTime.now().second.toString()}";
+    var header = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + box.read("token")
+    };
+    object["tgl"] = tgl.toString();
+    object["jam"] = jam.toString();
+    object["total"] = total.toString();
+    object["item"] = item.toString();
+    object["id_address"] = id_address.toString();
+    object["id_user"] = user.value.id.toString();
+
+    for (var i = 0; i < listCart.length; i++) {
+      var innerObj = {};
+      innerObj["id_product_detail"] = listCart[i].productDetail!.id.toString();
+      innerObj["quantity"] = listCart[i].quantity;
+      innerObj["sub_total"] =
+          listCart[i].product!.harga! * listCart[i].quantity!.toInt();
+      requstD.add(innerObj);
+    }
+    object["RequestDetails"] = requstD;
+
+    print(jsonEncode(object));
+
+    // print(body);
+    final response = await http.post(Uri.parse(url),
+        headers: header, body: jsonEncode(object));
+    print(response.body);
+  }
 
   Stream<void> getFavoriteStream() {
     return Stream.periodic(Duration(seconds: 1))
@@ -244,6 +289,7 @@ class UmumController extends GetxController {
     String url = baseUrl + "api/auth/Address/" + user.value.id.toString();
     final response = await http.get(Uri.parse(url), headers: header);
     var data = jsonDecode(response.body);
+    print(response.body);
     if (response.statusCode == 200) {
       province.value = data["data"]["province"];
       district.value = data["data"]["city"];
@@ -253,8 +299,9 @@ class UmumController extends GetxController {
       idprovince = data["data"]["id_province"];
       idCity = data["data"]["id_city"];
       idSubdistrict = data["data"]["id_subdistrict"];
+      id_Address.value = int.parse(data["data"]["id"]);
       address = true;
-    }else{
+    } else {
       address = false;
     }
 

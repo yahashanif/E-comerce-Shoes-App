@@ -7,7 +7,7 @@ class CardItemMyOrders extends StatefulWidget {
   @override
   State<CardItemMyOrders> createState() => _CardItemMyOrdersState();
 }
-final Uri _url = Uri.parse('https://app.sandbox.midtrans.com/snap/v2/vtweb/4ec8daff-04a6-4e9c-9dbd-d9ceecac12b0');
+final Uri _url = Uri.parse('https://app.sandbox.midtrans.com/snap/v2/vtweb/30006a63-56a2-486f-9d1e-59388d47740f');
 class _CardItemMyOrdersState extends State<CardItemMyOrders> {
   void _launchUrl() async {
   if (!await launchUrl(_url)) throw 'Could not launch $_url';

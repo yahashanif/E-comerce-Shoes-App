@@ -285,22 +285,27 @@ class CheckoutView extends GetView<CheckoutController> {
                     ),
                   ),
                   Spacer(),
-                  Container(
-                    padding: EdgeInsets.fromLTRB(58, 0, 58, 20),
+                  GestureDetector(
+                    onTap: (){
+                      umumC.createTransaction(ongkirC.ongkirPilih.value.cost!.cost!.first.value!.toInt() + umumC.subtotal.toInt(), umumC.jumitem.toInt(), umumC.id_Address.value.toInt());
+                    },
                     child: Container(
-                      height: 47,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: primaryColor),
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Center(
-                        child: Text(
-                          "Checkout Now",
-                          style: ProductNameStyle.copyWith(
-                              fontSize: 15,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
+                      padding: EdgeInsets.fromLTRB(58, 0, 58, 20),
+                      child: Container(
+                        height: 47,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: primaryColor),
+                            color: primaryColor,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Center(
+                          child: Text(
+                            "Checkout Now",
+                            style: ProductNameStyle.copyWith(
+                                fontSize: 15,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ),
                     ),
